@@ -4,23 +4,32 @@ security:
         algorithm: bcrypt
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        user_provider:
-            entity:
-              class: App\Entity\User
+#        user_provider:
+#            entity:
+#              class: App\Entity\User
+#              property: apiKey
+        api_key_user_provider:
+            id: App\Security\ApiKeyUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+#        main:
+#            anonymous: ~
+#            provider: user_provider
+#            form_login:
+#              login_path: security_login
+#              check_path: security_login
+#            remember_me:
+#              secret:   '%kernel.secret%'
+#              lifetime: 604800 # 1 week in seconds
+#              path:     /
         main:
-            anonymous: ~
-            provider: user_provider
-            form_login:
-              login_path: security_login
-              check_path: security_login
-            remember_me:
-              secret:   '%kernel.secret%'
-              lifetime: 604800 # 1 week in seconds
-              path:     /
+            pattern: ^/api
+            stateless: true
+            simple_preauth:
+                authenticator: App\Security\ApiKeyAuthenticator
+            provider: api_key_user_provider
 
           # activate different ways to authenticate
 
@@ -34,4 +43,5 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api, roles: ROLE_API }
 

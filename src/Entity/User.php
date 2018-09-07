@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
-
     const ON_PRE_CREATED = 'pre_created'; // 创建事件名称
     const ON_PRE_UPDATED = 'pre_updated'; // 更新事件名称
 
@@ -47,6 +46,11 @@ class User implements UserInterface
      */
     private $isActive;
 
+    /**
+     * @ORM\Column(type="string", unique=true)
+     */
+    private $apiKey;
+
     public function __construct()
     {
         $this->isActive = true;
@@ -76,7 +80,7 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        return array('ROLE_USER');
+        return array('ROLE_USER', 'ROLE_API');
     }
 
     public function getSalt()
@@ -134,5 +138,21 @@ class User implements UserInterface
     public function getPhone()
     {
         return $this->phone;
+    }
+
+    /**
+     * @param mixed $apiKey
+     */
+    public function setApiKey($apiKey): void
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
     }
 }
